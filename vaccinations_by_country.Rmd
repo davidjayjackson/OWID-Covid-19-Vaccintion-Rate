@@ -1,0 +1,54 @@
+---
+title: "Vaccination Rates by Country"
+author: "David Jackson"
+date: "9/24/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(scales)
+
+```
+
+## R Markdown
+
+COVID-19 vaccine doses administered per 100 people, Sep 23, 2021
+For vaccines that require multiple doses, each individual dose is counted. As the same person may receive more than one dose, the number of doses per 100 people can be higher than 100.
+
+By September 21, 2021, 6 billion doses of COVID-19 vaccine had been administered across the world. But this global figure hides great inequalities between continents and income groups. Vaccine doses have so far been distributed very unevenly: low-income countries, particularly those across Africa, lag behind.
+
+In August, the United Nations, International Monetary Fund, World Bank, World Health Organization and World Trade Organization called for international commitment and support so that every country would have vaccinated at least 40% of its population with at least one dose by the end of 2021.
+
+
+
+### Covid-19 Vaccination Doses Per Capita
+
+
+```{r cars}
+rm(list=ls())
+vaccination_per_captia <- read.csv("./covid-vaccination-doses-per-capita.csv")
+```
+
+#### Which countries are on track to have vaccinated 40% of their population with at least 1 dose by the end of 2021?
+
+
+Based on our international COVID-19 vaccination data, we have made projections of which countries are on track to achieve this.
+
+This map shows which countries have already surpassed this 40% target; those that are on track to meet it by the end of 2021 based on recent vaccination rates; and those that are not on track.
+
+We will update these projections weekly to continue to monitor global progress towards this goal.
+
+
+#### How does Our World in Data calculate these projections?
+
+We then assume that this recent vaccination rate remains constant for the remainder of the year. By adding this expected share to the share of the population that have already been vaccinated, we project what share of people will have received at least one dose by January 1, 2022. We exclude from our projections countries that have not reported figures for more than 30 days.
+
+This method means that the projections do not take into account future increases or decreases in the speed of vaccination, which could result from changes in eligibility criteria, vaccine deliveries or shortages, or new government policies.
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+df <- read.csv("./OWID-Covid-19-Vaccintion-Rate.Rproj")
+```
+
