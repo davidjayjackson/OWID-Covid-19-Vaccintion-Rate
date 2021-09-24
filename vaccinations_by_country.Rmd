@@ -29,6 +29,7 @@ In August, the United Nations, International Monetary Fund, World Bank, World He
 ```{r cars}
 rm(list=ls())
 vaccination_per_captia <- read.csv("./covid-vaccination-doses-per-capita.csv")
+head(vaccination_per_captia)
 ```
 
 #### Which countries are on track to have vaccinated 40% of their population with at least 1 dose by the end of 2021?
@@ -49,6 +50,13 @@ This method means that the projections do not take into account future increases
 You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
-df <- read.csv("./OWID-Covid-19-Vaccintion-Rate.Rproj")
+vaccintion_rates <- read.csv("./covid-vaccination-global-projections.csv")
+vaccintion_rates$status <- as.factor(vaccintion_rates$status)
+
+t1 <- table(vaccintion_rates$status)
+barplot(t1)
+
+prop1 <- prop.table(t1)
+barplot(prop1)
 ```
 
