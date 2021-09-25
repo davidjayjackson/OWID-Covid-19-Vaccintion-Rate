@@ -2,14 +2,17 @@
 title: "Vaccination Rates by Country"
 author: "David Jackson"
 date: "9/24/2021"
-output: html_document
+output: 
+  html_document: 
+    fig_width: 8
+    fig_height: 6
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE,error = FALSE,message = FALSE)
 library(tidyverse)
 library(scales)
-
+library(RSQLite)
 ```
 
 ## R Markdown
@@ -29,8 +32,26 @@ In August, the United Nations, International Monetary Fund, World Bank, World He
 ```{r cars}
 rm(list=ls())
 vaccination_per_captia <- read.csv("./covid-vaccination-doses-per-capita.csv")
-head(vaccination_per_captia)
+summary(vaccination_per_captia$total_vaccinations_per_hundred)
+
+vaccination_per_captia %>% filter(Code !="") %>%
+ggplot + geom_histogram(aes(x=total_vaccinations_per_hundred)) 
+  
 ```
+
+```{r}
+vaccination_per_captia <- vaccination_per_captia %>% rename(Country = Entity)
+vaccination_per_captia$Day <- as.Date(vaccination_per_captia$Day)
+```
+
+### Worldwide Vaccination Totals by Year
+
+```{r}
+vaccination_per_captia %>% filter(Country =="World") %>%
+  ggplot(aes(x=Day,y = total_vaccinations_per_hundred)) +
+  geom_line() + labs(title = "Worldwide Vaccination per 100 People ",subtitle = "(Dec. 2021 - Sept 2021")
+```
+
 
 #### Which countries are on track to have vaccinated 40% of their population with at least 1 dose by the end of 2021?
 
@@ -51,12 +72,43 @@ You can also embed plots, for example:
 
 ```{r pressure, echo=FALSE}
 vaccintion_rates <- read.csv("./covid-vaccination-global-projections.csv")
-vaccintion_rates$status <- as.factor(vaccintion_rates$status)
-
+# vaccintion_rates$status <- as.factor(vaccintion_rates$status)
+```
+```{r}
 t1 <- table(vaccintion_rates$status)
-barplot(t1)
-
-prop1 <- prop.table(t1)
-barplot(prop1)
+t1_df <- as.data.frame(t1)
+ggplot(t1_df) + geom_col(aes(x=Freq,y=Var1))
 ```
 
+```{r}
+prop1 <- prop.table(t1)
+prop_df <- as.data.frame(prop1)
+ggplot(prop_df) + geom_col(aes(x=Freq,y=Var1)) +
+  scale_x_continuous(label = percent) +
+  labs(title = "Percent of Countries above\nbelow or close to 40% Vaccination Rate", y="Countries")
+```
+
+### Totals by Country
+
+```{r}
+continent  <- vaccination_per_captia %>% filter(Code =="")
+continent <- continent %>% filter(!Country %in% c("High income","Low income","Lower middle income","Upper middle income"))
+```
+```{r}
+ggplot(continent) + 
+  geom_line(aes(x=Day,y=total_vaccinations_per_hundred,col=Country)) +
+  labs(title = "Total Vaccinations per Hundred by Continent",
+       y="Vaccinations per 100 peole")
+```
+
+### Plot by Income Level
+
+```{r}
+income_levels <- vaccination_per_captia %>% filter(Country %in% c("High income","Low income","Lower middle income","Upper middle income"))
+```
+```{r}
+ggplot(income_levels) + 
+  geom_line(aes(x=Day,y=total_vaccinations_per_hundred,col=Country)) +
+  labs(title = "Total Vaccinations per Hundred by Income Levels",
+       y="Vaccinations per 100 peole")
+```
